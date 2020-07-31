@@ -1181,8 +1181,8 @@ main (int argc, char **argv)
 #endif
 #ifndef P4_TO_P8
   /* randomly chosen advection direction */
-  ctx.v[0] = -0.445868402501118;
-  ctx.v[1] = -0.895098523991131;
+  ctx.v[0] = 1.0;
+  ctx.v[1] = 0.0;
 #else
   ctx.v[0] = 0.485191768970225;
   ctx.v[1] = -0.427996381877778;
@@ -1203,7 +1203,7 @@ main (int argc, char **argv)
   p4est = p4est_new_ext (mpicomm, /* communicator */
                          conn,    /* connectivity */
                          0,       /* minimum quadrants per MPI process */
-                         4,       /* minimum level of refinement */
+                         5,       /* minimum level of refinement */
                          1,       /* fill uniform */
                          sizeof (step3_data_t),         /* data size */
                          step3_init_initial_condition,  /* initializes data */
@@ -1212,11 +1212,11 @@ main (int argc, char **argv)
 
   /* refine and coarsen based on an interpolation error estimate */
   recursive = 1;
-  p4est_refine (p4est, recursive, step3_refine_err_estimate,
+  /*p4est_refine (p4est, recursive, step3_refine_err_estimate,
                 step3_init_initial_condition);
   p4est_coarsen (p4est, recursive, step3_coarsen_initial_condition,
                  step3_init_initial_condition);
-
+  */
   /* Partition: The quadrants are redistributed for equal element count.  The
    * partition can optionally be modified such that a family of octants, which
    * are possibly ready for coarsening, are never split between processors. */
@@ -1225,11 +1225,11 @@ main (int argc, char **argv)
   /* If we call the 2:1 balance we ensure that neighbors do not differ in size
    * by more than a factor of 2.  This can optionally include diagonal
    * neighbors across edges or corners as well; see p4est.h. */
-  p4est_balance (p4est, P4EST_CONNECT_FACE, step3_init_initial_condition);
-  p4est_partition (p4est, partforcoarsen, NULL);
+  // p4est_balance (p4est, P4EST_CONNECT_FACE, step3_init_initial_condition);
+  // p4est_partition (p4est, partforcoarsen, NULL);
 
   /* time step */
-  step3_timestep (p4est, 0.1);
+  step3_timestep (p4est, 0.000001);
 
   /* Destroy the p4est and the connectivity structure. */
   p4est_destroy (p4est);
